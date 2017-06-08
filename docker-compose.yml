@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  ms-user-microservice:
+    container_name: ms-user-microservice
+    user: root # avoids ton of volume mounting headaches in dev mode.
+    build:
+      context: .
+    volumes:
+      - ./:/opt/app
+      # @see: http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html#the-node_modules-volume-trick
+      - /opt/app/node_modules
+    expose:
+      - 5501
+    ports:
+      - 5501:5501
+    env_file:
+      - ./database.env
+    networks:
+      - backend
+    environment: 
+      - NODE_ENV=development
+      - NODE_HOT_RELOAD=1
+      - NODE_LOGGER_GRANULARLEVELS=1
+      - NODE_CONFIG_DISABLE_FILE_WATCH="Y"
+      - PORT=5501
+    command: nodemon -L -e js,coffee,jade,handlebars server.js
+
+  ms-user-microservice-db:
+    container_name: ms-user-microservice-db
+    image: mysql:5.7
+    # port mapping not needed for the app, but convenient in debugging
+    # to use some GUI tool (e.g. SequelPro) against the DB, on the host
+    ports:
+      - 5306:3306
+    env_file:
+      - ./database.env
+    volumes:
+      - ms_nb_example_db_data:/var/lib/mysql
+    restart: always
+    networks:
+      - backend
+
+volumes:
+  ms_nb_example_db_data:
+
+networks:
+  backend:
+    driver: bridge
