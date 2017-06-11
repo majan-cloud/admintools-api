@@ -6,7 +6,7 @@ const fh     = require("../support/fixture-helper.js");
 const log     = require('metalogger')();
 
 describe('users endpoint', function() {
-  var app;
+  let app;
 
   beforeEach(function (done) {
     app = server.express();

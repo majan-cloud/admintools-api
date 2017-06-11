@@ -1,8 +1,8 @@
 version: "3"
 
 services:
-  user-api-mspoc:
-    container_name: user-api-mspoc
+  api:
+    container_name: admintools-api
     user: root # avoids ton of volume mounting headaches in dev mode.
     build:
       context: .
@@ -11,23 +11,23 @@ services:
       # @see: http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html#the-node_modules-volume-trick
       - /opt/app/node_modules
     expose:
-      - 5501
+      - 3001
     ports:
-      - 5501:5501
+      - 3001:3001
     env_file:
       - ./database.env
     networks:
-      - backend
+      - majan
     environment: 
       - NODE_ENV=development
       - NODE_HOT_RELOAD=1
       - NODE_LOGGER_GRANULARLEVELS=1
       - NODE_CONFIG_DISABLE_FILE_WATCH="Y"
-      - PORT=5501
-    command: nodemon -L -e js,coffee,jade,handlebars server.js
+      - PORT=3001
+    command: nodemon -L -e js server.js
 
-  user-db-mspoc:
-    container_name: user-db-mspoc
+  db:
+    container_name: admintools-db
     image: mysql:5.7
     # port mapping not needed for the app, but convenient in debugging
     # to use some GUI tool (e.g. SequelPro) against the DB, on the host
@@ -36,14 +36,14 @@ services:
     env_file:
       - ./database.env
     volumes:
-      - ms_nb_example_db_data:/var/lib/mysql
+      - majan_db_data:/var/lib/mysql
     restart: always
     networks:
-      - backend
+      - majan
 
 volumes:
-  ms_nb_example_db_data:
+  majan_db_data:
 
 networks:
-  backend:
+  majan:
     driver: bridge

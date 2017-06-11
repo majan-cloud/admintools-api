@@ -18,6 +18,6 @@ ENV HOME_DIR=/opt/app \
     NODE_CLUSTERED=1 \
     NODE_ENV=production \
     NODE_HOT_RELOAD=0 \
-    PORT=5501
+    PORT=3001
 
-EXPOSE 5501
+EXPOSE 3001
